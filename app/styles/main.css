@@ -12,3 +12,13 @@ body {
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
+
+paper-toolbar#mainToolbar{
+	background-color: #FFF;
+	color: #3F51B5;
+	margin:15px 15px 0 15px;
+}
+paper-toolbar#mainToolbar .toolbar-tools.paper-toolbar{
+	padding-right: 0;
+	padding-left: 0;
+}

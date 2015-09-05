@@ -1,0 +1,65 @@
+<dom-module id="election-map">
+	<style>
+	:host{
+		display: block;
+		@apply(--layout-fit);
+	};
+	google-map{
+		@apply(--layout-fit);
+	}
+	</style>
+	<template>
+	<google-map latitude="19.0734647" longitude="96.6710399" zoom="5" additional-map-options='{"mapTypeControl":false,"streetViewControl":false,"overviewMapControl":false,"zoomControl":true}'></google-map>
+	</template>
+	<script>
+		(function(){
+			Polymer({
+				is:"election-map",
+				ready:function(){
+					var map = Polymer.dom(this.root).querySelector('google-map');
+
+					map.addEventListener('google-map-ready', function(e) {
+						map.map.data.setStyle({
+											    fillColor: 'green',
+											    strokeWeight: 1
+											  });
+   						var mps=MaePaySoh('6ca7ce5f2112c6733d295991dc55649aa0610ae5');
+						var loadGeoJSON=function(page){
+							mps.request({
+								endpoint:'geo/district',
+								params:{page:page},
+								onComplete:function(req){
+									var resp=req.srcElement.response
+									if(typeof resp.data!=='undefined'){
+										var FeatureCollection={
+											type:'FeatureCollection',
+											features:resp.data
+										};
+										map.map.data.addGeoJson(FeatureCollection);
+										if(resp.meta.pagination.current_page<resp.meta.pagination.total_pages){
+											loadGeoJSON(resp.meta.pagination.current_page+1);
+										}
+										else{
+											 
+											map.map.data.addListener('mouseover', function(event) {
+											    map.map.data.revertStyle();
+											    map.map.data.overrideStyle(event.feature, {fillColor: 'red'});
+											  });
+
+											 map.map.data.addListener('mouseout', function(event) {
+											    map.map.data.revertStyle();
+											  });
+										}
+									}
+								}
+							});
+						};
+						loadGeoJSON(1);
+						 
+  					});
+					
+				}
+			});
+		})();
+	</script>
+</dom-module>
